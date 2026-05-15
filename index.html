@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sponsor OS — The operating system for creator sponsorships</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f1ea;
+    --bg-2: #efe9de;
+    --surface: #ffffff;
+    --ink: #0e0e0d;
+    --ink-2: #2a2a28;
+    --ink-3: #6b6b66;
+    --ink-4: #9a9a93;
+    --line: #e3ddd0;
+    --line-2: #d4cdbd;
+    --emerald: #1a5d3a;
+    --emerald-2: #2a7a4f;
+    --emerald-3: #e3efe7;
+    --warm: #fbf5ea;
+    --tag: #ece4d3;
+    --danger: #b85a4a;
+    --gold: #b08740;
+    --shadow-lg: 0 30px 60px -20px rgba(14, 14, 13, 0.18), 0 8px 20px -8px rgba(14, 14, 13, 0.08);
+    --shadow-md: 0 10px 30px -10px rgba(14, 14, 13, 0.15);
+    --shadow-sm: 0 2px 8px -2px rgba(14, 14, 13, 0.08);
+    --radius-sm: 8px;
+    --radius: 12px;
+    --radius-lg: 20px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: "ss01", "cv11";
+  }
+  ::selection { background: var(--emerald); color: #fff; }
+  a { color: inherit; text-decoration: none; cursor: pointer; }
+  button { font: inherit; cursor: pointer; }
+  .container { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .container-narrow { max-width: 940px; margin: 0 auto; padding: 0 28px; }
+  .serif { font-family: 'Instrument Serif', 'Times New Roman', serif; font-weight: 400; letter-spacing: -0.005em; }
+  .serif-i { font-family: 'Instrument Serif', serif; font-style: italic; font-weight: 400; }
+  code { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.875em; background: var(--tag); padding: 2px 8px; border-radius: 6px; }
+
+  /* ---------- NAV ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: color-mix(in srgb, var(--bg) 80%, transparent);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+  }
+  .logo {
+    font-weight: 600; letter-spacing: -0.02em; font-size: 18px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .logo-dot {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--ink) 0%, var(--emerald) 100%);
+    display: inline-block;
+    position: relative;
+  }
+  .logo-dot::after {
+    content: ""; position: absolute; inset: 4px;
+    border-radius: 3px; background: var(--bg);
+  }
+  .nav-links {
+    display: flex; gap: 32px; font-size: 14.5px; color: var(--ink-2);
+  }
+  .nav-links a { transition: color 0.15s; }
+  .nav-links a:hover { color: var(--emerald); }
+  .nav-links a.active { color: var(--ink); font-weight: 500; }
+  .nav-right { display: flex; align-items: center; gap: 16px; }
+  .nav-login { font-size: 14.5px; color: var(--ink-2); }
+  .nav-cta {
+    background: var(--ink); color: #fff;
+    padding: 9px 16px; border-radius: 999px;
+    font-size: 14px; font-weight: 500;
+    border: none; transition: transform 0.15s, background 0.15s;
+  }
+  .nav-cta:hover { background: var(--emerald); transform: translateY(-1px); }
+  @media (max-width: 860px) { .nav-links, .nav-login { display: none; } }
+
+  /* ---------- PAGE SWITCHER ---------- */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeIn 0.35s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---------- EYEBROW ---------- */
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; letter-spacing: 0.02em;
+    color: var(--ink-2); font-weight: 500;
+    background: var(--surface); padding: 6px 14px; border-radius: 999px;
+    border: 1px solid var(--line);
+    margin-bottom: 28px;
+  }
+  .eyebrow::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--emerald); box-shadow: 0 0 0 3px color-mix(in srgb, var(--emerald) 25%, transparent);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero { padding: 88px 0 56px; position: relative; overflow: hidden; }
+  .hero::before {
+    content: ""; position: absolute;
+    top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--emerald) 12%, transparent) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  .hero-inner { position: relative; z-index: 1; }
+  h1.display {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(44px, 7vw, 88px);
+    line-height: 0.98; letter-spacing: -0.035em;
+    font-weight: 600;
+    margin: 0 0 28px;
+    max-width: 14ch;
+  }
+  h1.display .serif-i { font-size: 1.02em; color: var(--emerald); }
+  .hero .subhead {
+    font-size: clamp(17px, 1.6vw, 21px);
+    line-height: 1.45;
+    color: var(--ink-2);
+    max-width: 640px;
+    margin: 0 0 36px;
+  }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 22px; border-radius: 999px;
+    font-size: 15px; font-weight: 500;
+    border: 1px solid transparent;
+    transition: all 0.18s ease;
+  }
+  .btn-primary {
+    background: var(--ink); color: #fff;
+    box-shadow: var(--shadow-md);
+  }
+  .btn-primary:hover { background: var(--emerald); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+  .btn-secondary {
+    background: transparent; color: var(--ink); border-color: var(--line-2);
+  }
+  .btn-secondary:hover { border-color: var(--ink); background: var(--surface); }
+  .btn-ghost { color: var(--ink-2); padding: 13px 4px; }
+  .btn-ghost:hover { color: var(--emerald); }
+  .btn-arrow {
+    display: inline-block; transition: transform 0.2s;
+  }
+  .btn:hover .btn-arrow { transform: translateX(3px); }
+
+  /* ---------- PRODUCT FRAME (hero visual) ---------- */
+  .product-stage {
+    margin-top: 64px;
+    position: relative;
+  }
+  .product-stage::before {
+    content: ""; position: absolute;
+    inset: -40px -40px -80px -40px;
+    background: radial-gradient(ellipse at center top, color-mix(in srgb, var(--emerald) 8%, transparent), transparent 60%);
+    z-index: 0; border-radius: 32px;
+  }
+  .product-frame {
+    position: relative; z-index: 1;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .frame-bar {
+    height: 38px; background: #f7f3ea; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 6px; padding: 0 16px;
+  }
+  .frame-bar i {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: #d8d2c2; display: inline-block;
+  }
+  .frame-bar i:nth-child(1) { background: #d97757; }
+  .frame-bar i:nth-child(2) { background: #d4a93c; }
+  .frame-bar i:nth-child(3) { background: var(--emerald); }
+  .frame-bar .url {
+    margin-left: 16px; font-size: 12px; color: var(--ink-3);
+    background: var(--bg); padding: 4px 12px; border-radius: 6px;
+    flex: 1; max-width: 320px;
+  }
+  .frame-body {
+    display: grid; grid-template-columns: 220px 1fr 320px;
+    min-height: 460px;
+  }
+  .frame-sidebar {
+    background: #fbf8f1;
+    border-right: 1px solid var(--line);
+    padding: 20px 14px;
+  }
+  .sidebar-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 12px; padding: 0 6px; }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 8px; font-size: 13px;
+    color: var(--ink-2); margin-bottom: 2px;
+  }
+  .sidebar-item.active { background: var(--surface); color: var(--ink); font-weight: 500; box-shadow: var(--shadow-sm); }
+  .sidebar-item .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-4); }
+  .sidebar-item.active .dot { background: var(--emerald); }
+
+  .frame-main { padding: 28px 32px; }
+  .frame-tag { display: inline-block; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--emerald-2); font-weight: 600; background: var(--emerald-3); padding: 3px 10px; border-radius: 999px; margin-bottom: 14px; }
+  .frame-h { font-size: 22px; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 4px; }
+  .frame-sub { font-size: 13px; color: var(--ink-3); margin-bottom: 24px; }
+
+  .rate-card {
+    border: 1px solid var(--line); border-radius: 14px; padding: 22px; background: #fdfbf6;
+  }
+  .rate-label { font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-weight: 600; margin-bottom: 10px; }
+  .rate-num { font-size: 44px; font-weight: 600; letter-spacing: -0.025em; line-height: 1; margin: 4px 0 6px; }
+  .rate-conf { font-size: 12px; color: var(--emerald-2); font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+  .rate-conf::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--emerald); }
+  .rate-bar {
+    height: 8px; border-radius: 999px; background: var(--bg-2);
+    position: relative; margin: 22px 0 8px;
+  }
+  .rate-fill {
+    position: absolute; left: 22%; right: 18%; top: 0; bottom: 0;
+    background: linear-gradient(90deg, var(--emerald) 0%, var(--emerald-2) 100%);
+    border-radius: 999px;
+  }
+  .rate-marker {
+    position: absolute; left: 48%; top: -5px;
+    width: 4px; height: 18px; background: var(--ink); border-radius: 2px;
+    box-shadow: 0 0 0 4px var(--surface);
+  }
+  .rate-range { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-3); margin-top: 4px; }
+
+  .brand-card {
+    margin-top: 20px;
+    border: 1px solid var(--line); border-radius: 12px; padding: 16px; background: var(--surface);
+  }
+  .brand-card-h { font-size: 12px; color: var(--ink-3); margin-bottom: 10px; font-weight: 500; }
+  .brand-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; }
+  .brand-row + .brand-row { border-top: 1px dashed var(--line); }
+  .pill {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 600;
+  }
+  .pill-good { background: var(--emerald-3); color: var(--emerald-2); }
+
+  .frame-right {
+    background: #fbf8f1;
+    border-left: 1px solid var(--line);
+    padding: 24px;
+  }
+  .contract-h { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .contract-sub { font-size: 12px; color: var(--ink-3); margin-bottom: 18px; }
+  .clause {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 12px; font-size: 13px; border-radius: 8px;
+    margin-bottom: 4px; background: var(--surface);
+  }
+  .clause-name { color: var(--ink-2); }
+  .clause-val { color: var(--ink); font-weight: 500; font-size: 12.5px; }
+  .clause.flag { background: #fdf6e3; border: 1px solid #f0e5c2; }
+  .clause.flag .clause-val { color: var(--gold); }
+  .clause-tick { color: var(--emerald-2); margin-right: 4px; }
+
+  /* ---------- LOGO WALL ---------- */
+  .logo-wall {
+    padding: 56px 0 32px;
+    border-top: 1px solid var(--line);
+  }
+  .logo-wall-label {
+    text-align: center;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600;
+    margin-bottom: 32px;
+  }
+  .logo-wall-grid {
+    display: grid; grid-template-columns: repeat(6, 1fr);
+    gap: 28px; align-items: center;
+    opacity: 0.6;
+  }
+  .logo-placeholder {
+    height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px; letter-spacing: -0.02em;
+    color: var(--ink-2);
+  }
+  .logo-placeholder.bold { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.04em; }
+  .logo-placeholder.mono { font-family: ui-monospace, monospace; font-size: 14px; letter-spacing: 0.05em; }
+  @media (max-width: 860px) { .logo-wall-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+
+  /* ---------- SECTIONS ---------- */
+  section { padding: 112px 0; position: relative; }
+  section.tight { padding: 72px 0; }
+  .section-head { margin-bottom: 64px; max-width: 760px; }
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--emerald-2); font-weight: 600; margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: clamp(34px, 4.6vw, 56px); line-height: 1.04;
+    letter-spacing: -0.025em; font-weight: 600; margin: 0 0 20px;
+  }
+  .section-title .serif-i { color: var(--emerald); }
+  .section-lede {
+    font-size: clamp(17px, 1.4vw, 20px); color: var(--ink-2); margin: 0;
+    max-width: 660px; line-height: 1.5;
+  }
+
+  /* ---------- TWO-COLUMN PROBLEM ---------- */
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .problem-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 40px;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .problem-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .problem-card .col-tag {
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--emerald-2); font-weight: 600; margin-bottom: 18px;
+    display: inline-block;
+  }
+  .problem-card h3 {
+    font-size: 28px; line-height: 1.15; letter-spacing: -0.02em;
+    margin: 0 0 18px; font-weight: 600;
+  }
+  .problem-card p { color: var(--ink-2); margin: 0; font-size: 15.5px; line-height: 1.55; }
+  .problem-card .big-stat {
+    font-family: 'Instrument Serif', serif;
+    font-size: 80px; line-height: 1; color: var(--emerald);
+    margin: 0 0 16px;
+    letter-spacing: -0.02em;
+  }
+  .closer {
+    text-align: center; margin-top: 64px;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(24px, 3vw, 36px);
+    color: var(--ink-2); letter-spacing: -0.01em;
+  }
+  .closer strong { font-family: 'Inter', sans-serif; font-style: normal; font-weight: 600; color: var(--ink); }
+  @media (max-width: 860px) { .problem-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- THE LOOP ---------- */
+  .loop-section {
+    background: var(--ink); color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 80px 56px;
+    position: relative; overflow: hidden;
+  }
+  .loop-section::before {
+    content: ""; position: absolute;
+    top: -100px; left: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--emerald) 25%, transparent), transparent 70%);
+  }
+  .loop-section::after {
+    content: ""; position: absolute;
+    bottom: -120px; right: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--gold) 18%, transparent), transparent 70%);
+  }
+  .loop-section .section-eyebrow { color: color-mix(in srgb, var(--emerald) 80%, white 20%); }
+  .loop-section .section-title { color: #fff; }
+  .loop-section .section-lede { color: #c8c8c2; }
+  .loop-section .section-head { position: relative; z-index: 1; }
+  .loop-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    position: relative; z-index: 1;
+    margin-top: 32px;
+  }
+  .loop-tile {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .loop-tile:hover { background: rgba(255,255,255,0.08); transform: translateY(-3px); }
+  .loop-tile .num {
+    font-family: 'Instrument Serif', serif;
+    font-size: 36px;
+    color: var(--emerald-3);
+    line-height: 1; margin-bottom: 20px;
+    opacity: 0.7;
+  }
+  .loop-tile h3 {
+    font-size: 19px; margin: 0 0 8px; font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+  .loop-tile p { font-size: 14.5px; color: #b8b8b2; margin: 0; line-height: 1.5; }
+  .loop-tile::after {
+    content: "→"; position: absolute; right: -14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--emerald); font-size: 22px;
+    z-index: 2; background: var(--ink); padding: 2px 4px;
+  }
+  .loop-tile:last-child::after { content: "↻"; right: -14px; }
+  @media (max-width: 860px) {
+    .loop-grid { grid-template-columns: 1fr; }
+    .loop-tile::after { content: "↓"; right: 50%; top: auto; bottom: -22px; transform: translateX(50%); }
+    .loop-section { padding: 56px 28px; }
+  }
+
+  /* ---------- STATS ---------- */
+  .stats-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 56px 0;
+  }
+  .stat {
+    text-align: left; padding: 0 16px;
+  }
+  .stat + .stat { border-left: 1px solid var(--line); }
+  .stat .num {
+    font-size: clamp(56px, 7vw, 92px);
+    font-weight: 600; letter-spacing: -0.04em; line-height: 0.9;
+    color: var(--ink);
+    font-feature-settings: "ss01", "tnum";
+  }
+  .stat .num .unit { color: var(--emerald); }
+  .stat .label {
+    font-size: 14px; color: var(--ink-2); margin-top: 16px;
+    max-width: 260px; line-height: 1.5;
+  }
+  @media (max-width: 860px) {
+    .stats-row { grid-template-columns: 1fr; }
+    .stat + .stat { border-left: 0; border-top: 1px solid var(--line); padding-top: 24px; margin-top: 8px; }
+  }
+
+  /* ---------- FEATURE ROWS (creators / brands) ---------- */
+  .feature-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 88px;
+    align-items: center; margin-bottom: 128px;
+  }
+  .feature-row:last-child { margin-bottom: 0; }
+  .feature-row.reverse > div:first-child { order: 2; }
+  .feature-row h3 {
+    font-size: clamp(28px, 3.5vw, 40px); line-height: 1.1;
+    letter-spacing: -0.025em; margin: 16px 0 18px; font-weight: 600;
+  }
+  .feature-row .col-tag {
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--emerald-2); font-weight: 600;
+  }
+  .feature-row p {
+    color: var(--ink-2); font-size: 16.5px; line-height: 1.6;
+    margin: 0 0 14px;
+  }
+  .feature-row .stat-inline {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 18px;
+    font-size: 14px; color: var(--emerald-2); font-weight: 600;
+    background: var(--emerald-3); padding: 8px 14px; border-radius: 999px;
+  }
+  .stat-inline::before { content: "↗"; }
+
+  .feature-visual {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-md);
+    position: relative;
+  }
+  .visual-frame-bar {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 20px;
+    padding-bottom: 16px; border-bottom: 1px solid var(--line);
+  }
+  .visual-frame-bar i {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--line-2); display: inline-block;
+  }
+  .visual-frame-bar span {
+    font-size: 12px; color: var(--ink-3); margin-left: 8px;
+  }
+  @media (max-width: 860px) {
+    .feature-row { grid-template-columns: 1fr; gap: 32px; margin-bottom: 80px; }
+    .feature-row.reverse > div:first-child { order: 0; }
+  }
+
+  /* timeline visual */
+  .timeline-vis { padding: 8px 0; }
+  .timeline-row {
+    display: flex; align-items: center; gap: 16px;
+    padding: 12px 0; border-bottom: 1px dashed var(--line);
+    font-size: 14px;
+  }
+  .timeline-row:last-child { border-bottom: 0; }
+  .timeline-icon {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 2px solid var(--line); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: var(--ink-3);
+  }
+  .timeline-icon.done { background: var(--emerald); border-color: var(--emerald); color: #fff; }
+  .timeline-icon.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .timeline-icon.active::after {
+    content: ""; position: absolute; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--ink); animation: pulse 2s infinite; opacity: 0.3;
+  }
+  .timeline-name { flex: 1; color: var(--ink-2); }
+  .timeline-meta { font-size: 12px; color: var(--ink-3); }
+  .timeline-status { font-size: 11px; padding: 3px 8px; border-radius: 999px; font-weight: 600; }
+  .status-done { background: var(--emerald-3); color: var(--emerald-2); }
+  .status-active { background: #fef3d6; color: var(--gold); }
+  .status-due { background: var(--bg); color: var(--ink-3); }
+  @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.5); opacity: 0; } }
+
+  /* escrow visual */
+  .escrow-vis { font-size: 14px; }
+  .escrow-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; border-bottom: 1px dashed var(--line);
+  }
+  .escrow-row:last-child { border: none; }
+  .escrow-amount { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .escrow-row.total {
+    background: var(--emerald-3); margin: 8px -28px 0; padding: 16px 28px;
+    font-size: 16px; border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    border: none;
+  }
+
+  /* ---------- PULL QUOTE ---------- */
+  .pull-quote {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 80px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+  .pull-quote::before {
+    content: """;
+    position: absolute; top: -40px; left: 40px;
+    font-family: 'Instrument Serif', serif;
+    font-size: 240px; color: var(--emerald-3);
+    line-height: 1;
+  }
+  .pull-quote .big {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(36px, 5vw, 64px); line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: var(--ink); margin: 0 0 24px;
+    position: relative; z-index: 1;
+  }
+  .pull-quote .big em { color: var(--emerald); font-style: italic; }
+  .pull-quote .small { color: var(--ink-2); font-size: 16px; max-width: 540px; margin: 0 auto; line-height: 1.55; position: relative; z-index: 1; }
+  @media (max-width: 860px) { .pull-quote { padding: 56px 28px; } }
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testimonials { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .testimonial {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 32px;
+    display: flex; flex-direction: column; gap: 24px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .testimonial:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .testimonial .quote {
+    font-size: 16px; color: var(--ink); line-height: 1.5;
+    flex: 1;
+  }
+  .testimonial .quote::before { content: """; color: var(--emerald); font-family: 'Instrument Serif', serif; font-size: 36px; line-height: 0; vertical-align: -16px; margin-right: 4px; }
+  .testimonial .author {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--emerald) 0%, var(--gold) 100%);
+    color: #fff; font-weight: 600; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .author-name { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .author-role { font-size: 12.5px; color: var(--ink-3); }
+  @media (max-width: 860px) { .testimonials { grid-template-columns: 1fr; } }
+
+  /* ---------- COMPARISON ---------- */
+  .compare-wrap {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .compare-row {
+    display: grid; grid-template-columns: 2fr 1.2fr 1fr 1fr;
+    border-bottom: 1px solid var(--line);
+    font-size: 14.5px;
+  }
+  .compare-row:last-child { border-bottom: 0; }
+  .compare-cell { padding: 20px 24px; display: flex; align-items: center; }
+  .compare-row.head { background: var(--bg-2); }
+  .compare-row.head .compare-cell {
+    font-weight: 600; font-size: 12px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
+  }
+  .compare-row.head .compare-cell.us {
+    color: var(--emerald);
+    background: linear-gradient(180deg, var(--emerald-3) 0%, transparent 100%);
+  }
+  .compare-cell.us {
+    background: linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--emerald-3) 50%, transparent) 100%);
+    font-weight: 600;
+  }
+  .compare-cell.label-cell { color: var(--ink-2); font-weight: 500; }
+  .check { color: var(--emerald-2); font-weight: 700; }
+  .x { color: var(--ink-4); font-weight: 600; }
+  @media (max-width: 860px) {
+    .compare-row { grid-template-columns: 1.5fr 1fr; }
+    .compare-row .compare-cell:nth-child(n+4) { display: none; }
+  }
+
+  /* ---------- PRICING CARD ---------- */
+  .pricing-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; }
+  .pricing-main {
+    background: var(--ink); color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 56px;
+    position: relative; overflow: hidden;
+  }
+  .pricing-main::before {
+    content: ""; position: absolute;
+    top: -60px; right: -60px; width: 280px; height: 280px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--emerald) 35%, transparent), transparent 70%);
+  }
+  .pricing-main > * { position: relative; z-index: 1; }
+  .pricing-tag {
+    display: inline-block;
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--emerald-3); font-weight: 600;
+    background: color-mix(in srgb, var(--emerald) 30%, transparent);
+    padding: 5px 12px; border-radius: 999px;
+    margin-bottom: 28px;
+  }
+  .pricing-num {
+    font-size: clamp(72px, 10vw, 128px);
+    font-weight: 600; letter-spacing: -0.05em; line-height: 0.95;
+    margin: 0;
+    font-feature-settings: "tnum";
+  }
+  .pricing-num .small { font-size: 0.35em; color: #c8c8c2; font-weight: 500; vertical-align: 0.6em; margin-left: 6px; }
+  .pricing-tagline { font-size: 18px; color: #c8c8c2; margin: 16px 0 32px; max-width: 380px; }
+  .pricing-list { list-style: none; padding: 0; margin: 0; }
+  .pricing-list li {
+    font-size: 14.5px; color: #c8c8c2; padding: 8px 0;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .pricing-list li::before {
+    content: "✓"; color: var(--emerald-3); font-weight: 700; flex-shrink: 0;
+  }
+  .pricing-side {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 40px;
+  }
+  .pricing-side h4 { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 24px; font-weight: 600; }
+  .compare-mini-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; border-bottom: 1px dashed var(--line);
+    font-size: 14.5px;
+  }
+  .compare-mini-row:last-child { border: none; }
+  .compare-mini-row .name { color: var(--ink-2); }
+  .compare-mini-row .val { font-weight: 600; }
+  .compare-mini-row .val.us { color: var(--emerald-2); }
+  @media (max-width: 860px) { .pricing-grid { grid-template-columns: 1fr; } .pricing-main { padding: 40px 28px; } }
+
+  /* ---------- DUAL AUDIENCE PICKER ---------- */
+  .audience-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .audience-card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 48px;
+    position: relative; overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: pointer;
+  }
+  .audience-card:hover {
+    border-color: var(--emerald);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  .audience-card::after {
+    content: ""; position: absolute;
+    bottom: -80px; right: -80px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, var(--emerald-3), transparent 70%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .audience-card:hover::after { opacity: 1; }
+  .audience-card > * { position: relative; z-index: 1; }
+  .audience-tag {
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--emerald-2); font-weight: 600; margin-bottom: 20px;
+  }
+  .audience-card h3 {
+    font-size: 32px; line-height: 1.1; letter-spacing: -0.025em;
+    margin: 0 0 14px; font-weight: 600;
+  }
+  .audience-card p { color: var(--ink-2); margin: 0 0 28px; font-size: 16px; line-height: 1.55; }
+  .audience-card .arrow-link {
+    font-size: 15px; color: var(--emerald-2); font-weight: 600;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  @media (max-width: 860px) { .audience-grid { grid-template-columns: 1fr; } }
+
+  /* ---------- CTA BLOCK ---------- */
+  .cta-block {
+    background: linear-gradient(135deg, var(--ink) 0%, #1c2420 100%);
+    color: #fff;
+    border-radius: var(--radius-lg);
+    padding: 88px 64px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .cta-block::before {
+    content: ""; position: absolute;
+    top: -100px; left: 50%; transform: translateX(-50%);
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, color-mix(in srgb, var(--emerald) 30%, transparent), transparent 60%);
+  }
+  .cta-block > * { position: relative; z-index: 1; }
+  .cta-block h2 {
+    font-size: clamp(36px, 5vw, 64px);
+    margin: 0 0 20px; letter-spacing: -0.03em; font-weight: 600;
+    line-height: 1.05;
+  }
+  .cta-block h2 .serif-i { color: var(--emerald-3); }
+  .cta-block p { color: #c8c8c2; max-width: 580px; margin: 0 auto 40px; font-size: 17px; line-height: 1.5; }
+  .cta-block .btn-primary { background: #fff; color: var(--ink); }
+  .cta-block .btn-primary:hover { background: var(--emerald-3); }
+  .cta-block .btn-secondary { color: #fff; border-color: rgba(255,255,255,0.2); }
+  .cta-block .btn-secondary:hover { border-color: #fff; background: rgba(255,255,255,0.05); }
+  @media (max-width: 860px) { .cta-block { padding: 56px 28px; } }
+
+  /* ---------- THREE-LINE CALLOUT (creators) ---------- */
+  .three-line { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 48px; }
+  .three-line .item h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(26px, 3vw, 36px); line-height: 1.15;
+    letter-spacing: -0.01em; margin: 0 0 10px; font-weight: 400;
+    color: var(--ink);
+  }
+  .three-line .item h3 em { color: var(--emerald); font-style: italic; }
+  .three-line .item p { color: var(--ink-3); margin: 0; font-size: 16px; }
+  @media (max-width: 860px) { .three-line { grid-template-columns: 1fr; gap: 20px; } }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    background: var(--ink); color: #c8c8c2;
+    padding: 88px 0 40px;
+    margin-top: 80px;
+  }
+  .footer-grid {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    gap: 48px;
+  }
+  .footer-logo {
+    color: #fff; display: flex; align-items: center; gap: 10px;
+    font-size: 20px; font-weight: 600; letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  .footer-tag { font-size: 14.5px; max-width: 280px; line-height: 1.5; }
+  .footer-grid h4 { color: #fff; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; margin: 0 0 18px; font-weight: 600; }
+  .footer-grid a { display: block; margin-bottom: 10px; font-size: 14.5px; transition: color 0.15s; }
+  .footer-grid a:hover { color: #fff; }
+  .footer-bottom {
+    margin-top: 64px; padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex; justify-content: space-between; font-size: 13.5px; color: #8a8a82;
+  }
+  @media (max-width: 860px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } .footer-bottom { flex-direction: column; gap: 12px; } }
+
+  /* ---------- SCROLL REVEAL ---------- */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ---------- UTILS ---------- */
+  .text-center { text-align: center; }
+  .mt-sm { margin-top: 16px; }
+  .mt-md { margin-top: 32px; }
+  .mt-lg { margin-top: 64px; }
+  .badge-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+  .badge {
+    font-size: 12.5px; color: var(--ink-3); font-weight: 500;
+    padding: 6px 12px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--emerald); }
+</style>
+</head>
+<body>
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav">
+  <div class="container nav-inner">
+    <a class="logo" data-nav="home">
+      <span class="logo-dot"></span>
+      Sponsor&nbsp;OS
+    </a>
+    <div class="nav-links">
+      <a data-page="creators">For creators</a>
+      <a data-page="brands">For brands</a>
+      <a data-page="brands">Pricing</a>
+      <a>Customers</a>
+      <a>Resources</a>
+    </div>
+    <div class="nav-right">
+      <a class="nav-login">Log in</a>
+      <button class="nav-cta">Get on the list</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ==================== HOME PAGE ==================== -->
+<main class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <span class="eyebrow">Private beta · Q4 2026 launch</span>
+      <h1 class="display">The <span class="serif-i">operating system</span> for creator sponsorships.</h1>
+      <p class="subhead">Sponsor OS replaces the talent agency. Creators keep 100% of their rate. Brands pay half the commission. Both sides get the contracts, escrow, and reporting that make the category work.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary" data-nav="creators">For creators <span class="btn-arrow">→</span></button>
+        <button class="btn btn-secondary" data-nav="brands">For brands <span class="btn-arrow">→</span></button>
+        <a class="btn btn-ghost">Watch the demo →</a>
+      </div>
+      <div class="badge-row">
+        <span class="badge">+20% median rate lift</span>
+        <span class="badge">−40% time to payment</span>
+        <span class="badge">7.5% brand-side fee</span>
+      </div>
+
+      <div class="product-stage reveal">
+        <div class="product-frame">
+          <div class="frame-bar">
+            <i></i><i></i><i></i>
+            <span class="url">app.sponsoros.com/deals/nordlie-q2</span>
+          </div>
+          <div class="frame-body">
+            <div class="frame-sidebar">
+              <div class="sidebar-label">Pipeline</div>
+              <div class="sidebar-item"><span class="dot"></span>Inbound (3)</div>
+              <div class="sidebar-item active"><span class="dot"></span>Pricing (1)</div>
+              <div class="sidebar-item"><span class="dot"></span>Contracting (2)</div>
+              <div class="sidebar-item"><span class="dot"></span>Active (5)</div>
+              <div class="sidebar-item"><span class="dot"></span>Paid (12)</div>
+              <div class="sidebar-label" style="margin-top:32px;">This month</div>
+              <div class="sidebar-item">GMV · $58.2K</div>
+              <div class="sidebar-item">Deals · 6 active</div>
+              <div class="sidebar-item">Pending · $34.8K</div>
+            </div>
+            <div class="frame-main">
+              <span class="frame-tag">● Pricing recommendation ready</span>
+              <h3 class="frame-h">Nordlie — Dedicated video</h3>
+              <p class="frame-sub">Tech vertical · 02:15 integration · 30-day exclusivity · whitelisting requested</p>
+
+              <div class="rate-card">
+                <div class="rate-label">Recommended rate</div>
+                <div class="rate-num">$9,400</div>
+                <div class="rate-conf">High confidence · 64 comparable deals</div>
+                <div class="rate-bar"><div class="rate-fill"></div><div class="rate-marker"></div></div>
+                <div class="rate-range"><span>Floor $7,200</span><span>Ceiling $11,800</span></div>
+              </div>
+
+              <div class="brand-card">
+                <div class="brand-card-h">Brand history on Sponsor OS</div>
+                <div class="brand-row"><span>Prior deals</span><span><strong>4</strong></span></div>
+                <div class="brand-row"><span>Avg deal size</span><span><strong>$8,800</strong></span></div>
+                <div class="brand-row"><span>Payment behavior</span><span class="pill pill-good">On time</span></div>
+              </div>
+            </div>
+            <div class="frame-right">
+              <div class="contract-h">Contract — clauses</div>
+              <div class="contract-sub">Standard template · Dedicated video</div>
+              <div class="clause"><span class="clause-name">Exclusivity (30 days)</span><span class="clause-val"><span class="clause-tick">✓</span>Standard</span></div>
+              <div class="clause flag"><span class="clause-name">Whitelisting (6 mo)</span><span class="clause-val">+25% suggested</span></div>
+              <div class="clause"><span class="clause-name">IP ownership</span><span class="clause-val"><span class="clause-tick">✓</span>Creator</span></div>
+              <div class="clause"><span class="clause-name">Kill fee</span><span class="clause-val"><span class="clause-tick">✓</span>50%</span></div>
+              <div class="clause"><span class="clause-name">Approval rounds</span><span class="clause-val">2</span></div>
+              <div style="margin-top: 16px; padding: 12px; background: var(--emerald-3); border-radius: 8px; font-size: 12px; color: var(--emerald-2); font-weight: 500;">
+                💡 Their last deal with a similar creator included whitelisting at no extra cost — push for that.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGO WALL -->
+  <section class="logo-wall tight" style="padding-top: 0; padding-bottom: 56px;">
+    <div class="container">
+      <div class="logo-wall-label">Built on a decade of sponsorship data across creators with</div>
+      <div class="logo-wall-grid">
+        <div class="logo-placeholder bold">100M+ subs</div>
+        <div class="logo-placeholder serif">$140M GMV</div>
+        <div class="logo-placeholder mono">300+ BRANDS</div>
+        <div class="logo-placeholder bold">12K+ DEALS</div>
+        <div class="logo-placeholder serif">10 yrs</div>
+        <div class="logo-placeholder mono">48 STATES</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROBLEM -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-eyebrow">The problem on both sides</div>
+        <h2 class="section-title">Mid-tier sponsorships are <span class="serif-i">broken twice over.</span></h2>
+        <p class="section-lede">Creators leave money on the table. Brands pay agency rates for a spreadsheet. Both sides know it.</p>
+      </div>
+
+      <div class="problem-grid reveal">
+        <div class="problem-card">
+          <span class="col-tag">For creators</span>
+          <div class="big-stat">8–15h</div>
+          <h3>Of overhead, per deal.</h3>
+          <p>A mid-tier creator undercharges by 30 to 60 percent because no benchmark exists for their tier. They sign brand-drafted contracts they don't understand. Then they wait 60 days for the money — if it shows up.</p>
+        </div>
+        <div class="problem-card">
+          <span class="col-tag">For brands</span>
+          <div class="big-stat">15–30%</div>
+          <h3>In commissions, for a spreadsheet.</h3>
+          <p>A brand marketing manager pays an agency or influencer platform for opaque pricing and a deliverable tracked in someone's Notion. Net-60 invoicing makes finance unhappy. One dispute eats a quarter of the campaign's margin.</p>
+        </div>
+      </div>
+
+      <p class="closer">There is a <span class="serif-i">better deal</span> in the middle. <strong>We built it.</strong></p>
+    </div>
+  </section>
+
+  <!-- THE LOOP -->
+  <section>
+    <div class="container">
+      <div class="loop-section reveal">
+        <div class="section-head">
+          <div class="section-eyebrow">How Sponsor OS works</div>
+          <h2 class="section-title">Four pillars. <span class="serif-i">One loop.</span></h2>
+          <p class="section-lede">Most tools in this category are point solutions: a rate calculator, a contract template, a Stripe-on-top invoicing app. Sponsor OS is the loop — each piece is better because the others exist.</p>
+        </div>
+
+        <div class="loop-grid">
+          <div class="loop-tile">
+            <div class="num">01</div>
+            <h3>Pricing intelligence</h3>
+            <p>A floor, recommended, and ceiling rate in 60 seconds. Brands see the same benchmark.</p>
+          </div>
+          <div class="loop-tile">
+            <div class="num">02</div>
+            <h3>Standardized contracts</h3>
+            <p>Six creator-favorable templates. Redlines flagged inline with plain-English explanations.</p>
+          </div>
+          <div class="loop-tile">
+            <div class="num">03</div>
+            <h3>Deliverable tracking</h3>
+            <p>Script, cut, publish, report. One shared timeline. Automatic reminders. No DMs.</p>
+          </div>
+          <div class="loop-tile">
+            <div class="num">04</div>
+            <h3>Escrow &amp; payments</h3>
+            <p>Brand funds on signature. Creator paid seven days after publish, not sixty.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="tight">
+    <div class="container">
+      <div class="section-head text-center" style="margin: 0 auto 48px;">
+        <div class="section-eyebrow">Measurable lift on both sides</div>
+        <h2 class="section-title">The <span class="serif-i">numbers</span> we target.</h2>
+      </div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="num" data-count="20" data-prefix="+" data-suffix="%">+20<span class="unit">%</span></div>
+          <div class="label">Median rate lift vs. creator's six-month baseline</div>
+        </div>
+        <div class="stat">
+          <div class="num">−40<span class="unit">%</span></div>
+          <div class="label">Reduction in time from publish to payment</div>
+        </div>
+        <div class="stat">
+          <div class="num">7.5<span class="unit">%</span></div>
+          <div class="label">Brand-side platform fee — about half of agency commission</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY IT WORKS -->
+  <section>
+    <div class="container-narrow">
+      <div class="section-head">
+        <div class="section-eyebrow">Why it works</div>
+        <h2 class="section-title">The <span class="serif-i">data</span> is the moat.</h2>
+      </div>
+      <p style="font-size: clamp(18px, 1.6vw, 22px); color: var(--ink-2); line-height: 1.5; margin: 0;">
+        Sponsor OS is built on ten years of real sponsorship deals — terms, rates, outcomes, payment behavior — across thousands of creators. Three hundred brand relationships. An existing roster of creators who help shape the product. We aren't building a marketplace from zero; we're <strong style="color: var(--ink); font-weight: 600;">productizing a business we already run.</strong> Every deal you do makes the next one smarter.
+      </p>
+    </div>
+  </section>
+
+  <!-- DUAL AUDIENCE -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-eyebrow">Get started</div>
+        <h2 class="section-title">Which side are you on?</h2>
+      </div>
+
+      <div class="audience-grid">
+        <div class="audience-card" data-nav="creators">
+          <div class="audience-tag">For creators</div>
+          <h3>I make videos.</h3>
+          <p>Price every deal. Send a contract in 10 minutes. Get paid 7 days after publish. Keep 100% of your rate.</p>
+          <span class="arrow-link">See how it works →</span>
+        </div>
+        <div class="audience-card" data-nav="brands">
+          <div class="audience-tag">For brands</div>
+          <h3>I sponsor them.</h3>
+          <p>Agency-grade contracting and escrow, at 7.5% instead of 15 to 30. Transparent pricing your finance team will like.</p>
+          <span class="arrow-link">See pricing →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="tight">
+    <div class="container">
+      <div class="cta-block">
+        <h2>Built for the <span class="serif-i">deal you're about to do.</span></h2>
+        <p>Sponsor OS is in private beta with our existing creator roster. Public launch is Q4 2026. Reserve early access.</p>
+        <div class="cta-row" style="justify-content:center;">
+          <button class="btn btn-primary">Request access <span class="btn-arrow">→</span></button>
+          <button class="btn btn-secondary">Talk to partnerships</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ==================== CREATORS PAGE ==================== -->
+<main class="page" id="page-creators">
+
+  <section class="hero">
+    <div class="container hero-inner">
+      <span class="eyebrow">For YouTube creators · 50K–500K subs</span>
+      <h1 class="display">A <span class="serif-i">talent agency,</span> in software.</h1>
+      <p class="subhead">Price every deal in 60 seconds. Send a contract in 10 minutes. Get paid 7 days after publish. Keep 100% of your rate — the brand pays the platform fee.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary">Get on the list <span class="btn-arrow">→</span></button>
+        <button class="btn btn-secondary">See how it works</button>
+      </div>
+      <div class="badge-row">
+        <span class="badge">No subscription</span>
+        <span class="badge">No take rate on your earnings</span>
+        <span class="badge">Brand pays the fee</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- THREE-LINE PROBLEM -->
+  <section class="tight">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-eyebrow">You already know what's wrong</div>
+        <h2 class="section-title">Three things you've stopped <span class="serif-i">saying out loud.</span></h2>
+      </div>
+      <div class="three-line">
+        <div class="item">
+          <h3>You're <em>undercharging.</em></h3>
+          <p>You can't prove it.</p>
+        </div>
+        <div class="item">
+          <h3>A workweek a month is <em>gone.</em></h3>
+          <p>And none of it was filming.</p>
+        </div>
+        <div class="item">
+          <h3>Net-60 is on a <em>good</em> month.</h3>
+          <p>You stopped expecting it on time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-eyebrow">What Sponsor OS does for you</div>
+        <h2 class="section-title">A manager in a box, <span class="serif-i">finally.</span></h2>
+      </div>
+
+      <div class="feature-row reveal">
+        <div>
+          <span class="col-tag">Pricing intelligence</span>
+          <h3>Know what to charge. Prove it.</h3>
+          <p>Forward an inbound email to <code>deals@your-workspace</code>. Sixty seconds later, you have a floor, recommended, and ceiling rate for the exact deal type the brand is asking about — adjusted for exclusivity, usage rights, and whitelisting.</p>
+          <p>Every recommendation comes with a confidence score and a comp-set summary so you can defend the number. If the brand has worked with Sponsor OS creators before, you see their historical spend and payment behavior.</p>
+          <div class="stat-inline">+20% median rate lift</div>
+        </div>
+        <div class="feature-visual">
+          <div class="visual-frame-bar"><i></i><i></i><i></i><span>Deal · Nordlie · dedicated video</span></div>
+          <div class="rate-label">Recommended rate</div>
+          <div class="rate-num">$9,400</div>
+          <div class="rate-conf">High confidence · 64 comp deals</div>
+          <div class="rate-bar"><div class="rate-fill"></div><div class="rate-marker"></div></div>
+          <div class="rate-range"><span>Floor $7,200</span><span>Ceiling $11,800</span></div>
+          <div class="brand-card">
+            <div class="brand-card-h">Brand history on Sponsor OS</div>
+            <div class="brand-row"><span>Prior deals</span><span><strong>4 · avg $8,800</strong></span></div>
+            <div class="brand-row"><span>Payment</span><span class="pill pill-good">On time</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-row reverse reveal">
+        <div>
+          <span class="col-tag">Standardized contracts</span>
+          <h3>Send a contract in ten minutes.</h3>
+          <p>Six templates drafted by entertainment-law counsel, with creator-favorable defaults baked in. You fill out a short form — rate, deliverables, exclusivity, usage rights, kill fee — and the contract renders from the data.</p>
+          <p>When the brand counters, deviations are flagged inline with plain-English explanations: <em>"This clause means the brand can reuse your video as paid ads for six months. Typical ask: 20 to 40 percent premium."</em> Both sides sign in product.</p>
+        </div>
+        <div class="feature-visual">
+          <div class="visual-frame-bar"><i></i><i></i><i></i><span>Dedicated video template</span></div>
+          <div class="clause"><span class="clause-name">Exclusivity (30 days)</span><span class="clause-val"><span class="clause-tick">✓</span>Standard</span></div>
+          <div class="clause flag"><span class="clause-name">Whitelisting (6 mo)</span><span class="clause-val">⚑ +25% suggested</span></div>
+          <div class="clause"><span class="clause-name">IP ownership</span><span class="clause-val"><span class="clause-tick">✓</span>Creator retains</span></div>
+          <div class="clause"><span class="clause-name">Kill fee</span><span class="clause-val"><span class="clause-tick">✓</span>50%</span></div>
+          <div class="clause"><span class="clause-name">Approval rounds</span><span class="clause-val">2</span></div>
+        </div>
+      </div>
+
+      <div class="feature-row reveal">
+        <div>
+          <span class="col-tag">Deliverable tracking</span>
+          <h3>Stop chasing deliverables.</h3>
+          <p>The moment the contract is signed, Sponsor OS turns the contract terms into a deliverable plan: script due, rough cut due, final cut due, publish date, performance report.</p>
+          <p>The brand sees the same timeline you do and approves cuts with one click. Reminders go out 48 and 24 hours before each deadline. When the video goes live, Sponsor OS verifies it via the YouTube API and pulls the 7-day and 30-day performance snapshot automatically.</p>
+        </div>
+        <div class="feature-visual">
+          <div class="visual-frame-bar"><i></i><i></i><i></i><span>Deliverable plan</span></div>
+          <div class="timeline-vis">
+            <div class="timeline-row"><div class="timeline-icon done">✓</div><div class="timeline-name">Script submitted</div><div class="timeline-status status-done">Approved</div></div>
+            <div class="timeline-row"><div class="timeline-icon done">✓</div><div class="timeline-name">Rough cut</div><div class="timeline-status status-done">Approved</div></div>
+            <div class="timeline-row"><div class="timeline-icon active">●</div><div class="timeline-name">Final cut</div><div class="timeline-status status-active">Due in 24h</div></div>
+            <div class="timeline-row"><div class="timeline-icon">4</div><div class="timeline-name">Publish</div><div class="timeline-status status-due">May 9</div></div>
+            <div class="timeline-row"><div class="timeline-icon">5</div><div class="timeline-name">Performance report</div><div class="timeline-status status-due">May 16</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-row reverse reveal">
+        <div>
+          <span class="col-tag">Escrow &amp; payments</span>
+          <h3>Get paid in seven days, not sixty.</h3>
+          <p>The brand funds the full deal amount into escrow on contract signature. That's the part you can never get them to do over email.</p>
+          <p>Funds release on milestone — typically 50% on final-cut approval, 50% seven days after publish. Payout to your bank is same-day once released.</p>
+          <div class="stat-inline">Median time to payment: 10 days</div>
+        </div>
+        <div class="feature-visual" style="padding-bottom: 0;">
+          <div class="visual-frame-bar"><i></i><i></i><i></i><span>Escrow · Deal #4892</span></div>
+          <div class="escrow-vis">
+            <div class="escrow-row"><span>Deal value</span><span class="escrow-amount">$9,400.00</span></div>
+            <div class="escrow-row"><span>Funded by brand</span><span class="pill pill-good">✓ Apr 12</span></div>
+            <div class="escrow-row"><span>Final-cut approval · 50%</span><span class="pill pill-good">✓ Apr 28 · released</span></div>
+            <div class="escrow-row"><span>Publish + 7 days · 50%</span><span style="color: var(--ink-3); font-size: 12px;">Queued · May 9</span></div>
+            <div class="escrow-row total"><span>Payout to creator</span><span class="escrow-amount">Same-day ACH</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PULL QUOTE -->
+  <section class="tight">
+    <div class="container">
+      <div class="pull-quote">
+        <p class="big">You keep <em>100%</em> of your rate.</p>
+        <p class="small">Sponsor OS is paid by the brand, on top of the deal value. Your $8,000 deal is $8,000 to you. No creator subscription. No take rate on your earnings. No surprise fees.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-eyebrow">What creators are saying</div>
+        <h2 class="section-title">Built with our roster, <span class="serif-i">for everyone like them.</span></h2>
+      </div>
+      <div class="testimonials">
+        <div class="testimonial">
+          <p class="quote">I've stopped guessing on rates. The first deal I closed through Sponsor OS was worth 35% more than my prior deal with the same brand.</p>
+          <div class="author"><div class="avatar">JM</div><div><div class="author-name">[placeholder]</div><div class="author-role">180K subs · personal finance</div></div></div>
+        </div>
+        <div class="testimonial">
+          <p class="quote">It's the operational backbone we tried to build in Notion for two years. My manager got her weekends back.</p>
+          <div class="author"><div class="avatar">MR</div><div><div class="author-name">[placeholder]</div><div class="author-role">420K subs · tech reviews</div></div></div>
+        </div>
+        <div class="testimonial">
+          <p class="quote">First time in three years I've been paid before the end of the month the video went live.</p>
+          <div class="author"><div class="avatar">SK</div><div><div class="author-name">[placeholder]</div><div class="author-role">95K subs · cooking</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="tight">
+    <div class="container">
+      <div class="cta-block">
+        <h2>Stop running deals on <span class="serif-i">Gmail.</span></h2>
+        <p>Sponsor OS is in private beta with our existing roster. Join the list to get early access and a free rate-benchmarking report for your tier.</p>
+        <div class="cta-row" style="justify-content:center;">
+          <button class="btn btn-primary">Request access <span class="btn-arrow">→</span></button>
+          <button class="btn btn-secondary">Read the FAQ</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ==================== BRANDS PAGE ==================== -->
+<main class="page" id="page-brands">
+
+  <section class="hero">
+    <div class="container hero-inner">
+      <span class="eyebrow">For brand marketing, agency, and media-buying teams</span>
+      <h1 class="display">Agency standards. <span class="serif-i">Half</span> the commission.</h1>
+      <p class="subhead">Standardized contracts, escrow protection, deliverable tracking, and performance reporting on every deal. 7.5% platform fee — instead of the 15 to 30 percent you pay an agency or an influencer platform.</p>
+      <div class="cta-row">
+        <button class="btn btn-primary">Talk to partnerships <span class="btn-arrow">→</span></button>
+        <button class="btn btn-secondary">See pricing</button>
+      </div>
+      <div class="badge-row">
+        <span class="badge">Transparent line-item fee</span>
+        <span class="badge">No account required</span>
+        <span class="badge">SOC 2 ready</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MATH -->
+  <section>
+    <div class="container-narrow">
+      <div class="section-head">
+        <div class="section-eyebrow">The math you already know</div>
+        <h2 class="section-title">You're paying <span class="serif-i">agency rates</span> for a spreadsheet.</h2>
+        <p class="section-lede">Top-tier talent agencies charge 15 to 20 percent. Influencer-marketing platforms charge 15 to 30 percent in margin. You pay those numbers because the alternative — running deals on email and chasing deliverables in spreadsheets — is worse.</p>
+      </div>
+      <p style="font-size: 22px; line-height: 1.5; color: var(--ink); font-weight: 500;">
+        Sponsor OS is the alternative <em style="font-family: 'Instrument Serif', serif; color: var(--emerald);">that isn't worse.</em>
+      </p>
+      <p style="font-size: 18px; line-height: 1.55; color: var(--ink-2); margin-top: 12px;">
+        7.5% on the deal value. Standardized contracts. Escrow. Reporting. Audit trail. The fee is a line item on the invoice — your finance team will like that more than the agency markup that isn't.
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT YOU GET -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-eyebrow">What you get</div>
+        <h2 class="section-title">Four things you currently <span class="serif-i">buy from someone else.</span></h2>
+      </div>
+
+      <div class="loop-grid" style="grid-template-columns: repeat(2, 1fr); gap: 24px;">
+        <div class="loop-tile" style="background: var(--surface); border-color: var(--line); color: var(--ink);">
+          <div class="num" style="color: var(--emerald);">01</div>
+          <h3 style="color: var(--ink);">A contract you've already seen.</h3>
+          <p style="color: var(--ink-2);">Every Sponsor OS deal uses one of six creator-favorable templates drafted by entertainment counsel. Your legal team approves the template once. Every subsequent deal uses the same base language. Counter-proposals are handled in product.</p>
+        </div>
+        <div class="loop-tile" style="background: var(--surface); border-color: var(--line); color: var(--ink);">
+          <div class="num" style="color: var(--emerald);">02</div>
+          <h3 style="color: var(--ink);">Escrow protection on every deal.</h3>
+          <p style="color: var(--ink-2);">You fund the deal into escrow on signature. Funds release on verified milestones — final-cut approval, then publish-plus-7-days. If a deliverable is missed, the funds stay in escrow. Dispute resolution happens on a timestamped record.</p>
+        </div>
+        <div class="loop-tile" style="background: var(--surface); border-color: var(--line); color: var(--ink);">
+          <div class="num" style="color: var(--emerald);">03</div>
+          <h3 style="color: var(--ink);">A timeline you can actually see.</h3>
+          <p style="color: var(--ink-2);">Every deal has a shared timeline: script, rough cut, final cut, publish, performance report. Approve in one click via a magic-link portal — no account, no password. Publish verified via the YouTube API. 7-day and 30-day reports auto-generated.</p>
+        </div>
+        <div class="loop-tile" style="background: var(--surface); border-color: var(--line); color: var(--ink);">
+          <div class="num" style="color: var(--emerald);">04</div>
+          <h3 style="color: var(--ink);">Benchmarks you can show finance.</h3>
+          <p style="color: var(--ink-2);">For every quoted rate, Sponsor OS surfaces an anonymized, category-level benchmark. You can see, in writing, that the rate you're paying is within market. That closes the "are we overpaying?" loop before it opens.</p>
+        </div>
+        <div class="loop-tile" style="grid-column: 1 / -1; background: var(--surface); border-color: var(--line);"><div class="num" style="display:none;"></div></div>
+      </div>
+      <style>.loop-tile::after { display: none; } #page-brands .loop-tile::after { display: none !important; }</style>
+    </div>
+  </section>
+
+  <!-- PULL QUOTE -->
+  <section class="tight">
+    <div class="container">
+      <div class="pull-quote">
+        <p class="big"><em>60 to 80%</em> less brand-AM time per deal.</p>
+        <p class="small">Contract review, invoice processing, deliverable chasing, and dispute handling all compress into a single workflow. The fee pays for itself before the platform discount.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-eyebrow">Pricing</div>
+        <h2 class="section-title">Transparent. Flat. <span class="serif-i">On the invoice.</span></h2>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="pricing-main">
+          <span class="pricing-tag">● Brand-side fee</span>
+          <div class="pricing-num">7.5<span class="small">% of deal value</span></div>
+          <p class="pricing-tagline">Paid by the brand, on top of the deal. Same fee structure for every brand and every deal.</p>
+          <ul class="pricing-list">
+            <li>Card processing passed through on payments above $5K</li>
+            <li>ACH and wire absorbed by the platform</li>
+            <li>No account required — sign and pay via secure magic-link</li>
+            <li>SOC 2 readiness and procurement packet included</li>
+          </ul>
+        </div>
+        <div class="pricing-side">
+          <h4>Compare your alternatives</h4>
+          <div class="compare-mini-row"><span class="name">Sponsor OS</span><span class="val us">7.5%</span></div>
+          <div class="compare-mini-row"><span class="name">Top-tier agencies (UTA, CAA, WME)</span><span class="val">15–20%</span></div>
+          <div class="compare-mini-row"><span class="name">Influencer-marketing platforms</span><span class="val">15–30%</span></div>
+          <div class="compare-mini-row"><span class="name">Direct (no platform)</span><span class="val">0% — and no protection</span></div>
+        </div>
+      </div>
+
+      <div class="compare-wrap mt-lg">
+        <div class="compare-row head">
+          <div class="compare-cell">What you pay for</div>
+          <div class="compare-cell us">Sponsor OS</div>
+          <div class="compare-cell">Top agency</div>
+          <div class="compare-cell">Influencer platform</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell label-cell">Commission / fee</div>
+          <div class="compare-cell us">7.5%</div>
+          <div class="compare-cell">15–20%</div>
+          <div class="compare-cell">15–30%</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell label-cell">Contract standardization</div>
+          <div class="compare-cell us"><span class="check">✓</span></div>
+          <div class="compare-cell"><span class="check">✓</span></div>
+          <div class="compare-cell">Varies</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell label-cell">Escrow protection</div>
+          <div class="compare-cell us"><span class="check">✓</span></div>
+          <div class="compare-cell"><span class="x">—</span></div>
+          <div class="compare-cell"><span class="x">—</span></div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell label-cell">Deliverable tracking</div>
+          <div class="compare-cell us"><span class="check">✓</span></div>
+          <div class="compare-cell">Manual</div>
+          <div class="compare-cell">Manual / partial</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell label-cell">Performance reporting</div>
+          <div class="compare-cell us">Auto, 7d + 30d</div>
+          <div class="compare-cell">Manual</div>
+          <div class="compare-cell">Varies</div>
+        </div>
+        <div class="compare-row">
+          <div class="compare-cell label-cell">Rate benchmarking</div>
+          <div class="compare-cell us"><span class="check">✓</span> In product</div>
+          <div class="compare-cell"><span class="x">—</span></div>
+          <div class="compare-cell"><span class="x">—</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCUREMENT -->
+  <section class="tight">
+    <div class="container-narrow">
+      <div class="section-head">
+        <div class="section-eyebrow">Procurement-ready</div>
+        <h2 class="section-title">Clear the platform once. <span class="serif-i">Use it everywhere.</span></h2>
+        <p class="section-lede">Sponsor OS provides RFP responses, SOC 2 readiness documentation, and vendor-onboarding packets so your IT and procurement teams can clear the platform once and use it across every creator partnership. We've already done this for the brands on the platform.</p>
+      </div>
+      <button class="btn btn-secondary">Download the brand vendor packet ↓</button>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <div class="section-eyebrow">What brand teams are saying</div>
+        <h2 class="section-title">From the brands <span class="serif-i">already on the platform.</span></h2>
+      </div>
+      <div class="testimonials">
+        <div class="testimonial">
+          <p class="quote">Cut our per-deal contract-review time from three weeks to two days. That alone justifies the fee.</p>
+          <div class="author"><div class="avatar">AB</div><div><div class="author-name">[placeholder]</div><div class="author-role">Brand marketing manager · DTC</div></div></div>
+        </div>
+        <div class="testimonial">
+          <p class="quote">Finally a vendor relationship our procurement team didn't have to argue about. The fee is on the invoice. Done.</p>
+          <div class="author"><div class="avatar">CK</div><div><div class="author-name">[placeholder]</div><div class="author-role">Agency account director</div></div></div>
+        </div>
+        <div class="testimonial">
+          <p class="quote">The escrow alone saved us from one ugly dispute last quarter. That would have been six figures in legal.</p>
+          <div class="author"><div class="avatar">DR</div><div><div class="author-name">[placeholder]</div><div class="author-role">Director of influencer marketing</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="tight">
+    <div class="container">
+      <div class="cta-block">
+        <h2>Talk to <span class="serif-i">partnerships.</span></h2>
+        <p>Sponsor OS is onboarding a limited grandfather cohort of brands at a permanently locked 5% platform fee. After the cohort fills, the standard 7.5% rate applies.</p>
+        <div class="cta-row" style="justify-content:center;">
+          <button class="btn btn-primary">Request a call <span class="btn-arrow">→</span></button>
+          <button class="btn btn-secondary">Download vendor packet</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <span class="logo-dot" style="background: linear-gradient(135deg, #fff 0%, var(--emerald) 100%);"></span>
+          Sponsor&nbsp;OS
+        </div>
+        <p class="footer-tag">The operating system for creator sponsorships. Built by the team that has done this for a decade.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <a data-nav="creators">For Creators</a>
+        <a data-nav="brands">For Brands</a>
+        <a>Pricing</a>
+        <a>Security</a>
+        <a>Changelog</a>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <a>Rate benchmarks</a>
+        <a>Contract guide</a>
+        <a>Brand vendor packet</a>
+        <a>FAQ</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a>About</a>
+        <a>Careers</a>
+        <a>Press</a>
+        <a>Contact</a>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <a>Terms</a>
+        <a>Privacy</a>
+        <a>DPA</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Sponsor OS</div>
+      <div>Made for creators who keep what they earn.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Page switcher ----
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    var el = document.getElementById('page-' + name);
+    if (el) el.classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    var navA = document.querySelector('.nav-links a[data-page="' + name + '"]');
+    if (navA) navA.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'auto' });
+    // Re-arm reveals on the new page
+    setTimeout(armReveals, 50);
+  }
+  document.querySelectorAll('[data-page]').forEach(a => {
+    a.addEventListener('click', e => { e.preventDefault(); showPage(a.getAttribute('data-page')); });
+  });
+  document.querySelectorAll('[data-nav]').forEach(a => {
+    a.addEventListener('click', e => { e.preventDefault(); showPage(a.getAttribute('data-nav')); });
+  });
+
+  // ---- Scroll reveal ----
+  function armReveals() {
+    var io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
+  }
+  armReveals();
+</script>
+
+</body>
+</html>
